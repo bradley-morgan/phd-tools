@@ -1,5 +1,8 @@
 from test_problems import KnapSack
-from binary_GA_algorithm import GA
+from evolution.binary_GA_algorithm import SequentialGA
+from evolution.selector import Tournament
+from evolution.recombinator import RUniform
+from evolution.mutator import MUniform
 # problem params
 
 # Everything is specified within the limits
@@ -7,7 +10,7 @@ weight_average = 20
 weight_spread = 10
 value_average = 20
 value_spread = 10
-weight_limit = 400
+weight_limit = 3000
 total_items = 100
 
 knapsack = KnapSack(
@@ -27,17 +30,14 @@ knapsack.add_variable(name="density", value_type='pos', value_strength=0.1, weig
 knapsack.generate_problem_space()
 population = knapsack.generate_populaton()
 population = population(500)
-objective_function = knapsack.generate_objective_function()
 
-
-
-mother_nature = GA(
+mother_nature = SequentialGA(
     initial_genetic_material=population,
     population_size=500,
-    selector=None,
-    evaluator=objective_function,
-    recombinator=None,
-    mutator=None,
+    selector=Tournament(6, with_replacement=False),
+    evaluator=knapsack.generate_objective_function(),
+    recombinator=RUniform(),
+    mutator=MUniform(0.5),
     same_agent_breeding=False
 )
 

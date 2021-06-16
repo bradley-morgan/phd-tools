@@ -1,6 +1,7 @@
 import numpy as np
 
-class GA:
+
+class SequentialGA:
     def __init__(
             self,
             initial_genetic_material,
@@ -18,7 +19,8 @@ class GA:
         self.generation_count = 0
 
         for dna_sequence in initial_genetic_material:
-            self.population.append(Agent(self.name_agent(), dna_sequence, evaluator, recombinator, mutator))
+            agent = Agent(self.name_agent(), dna_sequence, evaluator, recombinator, mutator)
+            self.population.append(agent)
 
     def run_evolution(self):
         new_population = []
@@ -55,31 +57,30 @@ class GA:
         return parent_agent1, parent_agent2
 
     def name_agent(self):
-        seq = np.random.randint(0, 255, 5)
-        seq = [chr(s) for s in seq]
+        nums = np.random.randint(0, 127, 8)
+        seq = []
+        for n in nums:
+            seq.append(chr(n))
+        seq = ''.join(seq)
         name = f'gen:{self.generation_count}:{seq}'
         return name
 
 
 class Agent:
     def __init__(self, name, genetic_material, evaluator, recombinator, mutator):
-
         self.name = name
         self.genetic_material = genetic_material
         self.evaluator = evaluator
         self.recombinator = recombinator
         self.mutator = mutator
-        self.fitness = None
+        self.fitness_score = None
 
     def fitness(self):
-        self.fitness = self.evaluator(self.genetic_material)
-        return self.fitness
+        self.fitness_score = self.evaluator(self.genetic_material)
+        return self.fitness_score
 
     def mutate(self):
         self.genetic_material = self.mutator(self.genetic_material)
 
     def mate(self):
         pass
-
-
-
