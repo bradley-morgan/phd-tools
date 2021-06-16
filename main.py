@@ -1,4 +1,5 @@
 from test_problems import KnapSack
+from binary_GA_algorithm import GA
 # problem params
 
 # Everything is specified within the limits
@@ -27,6 +28,20 @@ knapsack.generate_problem_space()
 population = knapsack.generate_populaton()
 population = population(500)
 objective_function = knapsack.generate_objective_function()
+
+
+
+mother_nature = GA(
+    initial_genetic_material=population,
+    population_size=500,
+    selector=None,
+    evaluator=objective_function,
+    recombinator=None,
+    mutator=None,
+    same_agent_breeding=False
+)
+
+mother_nature.run_evolution()
 
 
 
