@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class MUniform:
 
     def __init__(self, probabiltiy):

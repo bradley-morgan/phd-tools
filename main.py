@@ -10,8 +10,15 @@ weight_average = 20
 weight_spread = 10
 value_average = 20
 value_spread = 10
-weight_limit = 3000
-total_items = 100
+weight_limit = 700
+total_items = 10
+
+# GA params
+population_size = 500
+evolution_steps = 100
+mutation_rate = 0.01
+tournament_size = 5
+tournament_with_replacement = False
 
 knapsack = KnapSack(
     weight_average=weight_average,
@@ -33,12 +40,14 @@ population = population(500)
 
 mother_nature = SequentialGA(
     initial_genetic_material=population,
-    population_size=500,
-    selector=Tournament(6, with_replacement=False),
+    population_size=population_size,
+    evolution_steps=evolution_steps,
+    selector=Tournament(tournament_size, with_replacement=tournament_with_replacement),
     evaluator=knapsack.generate_objective_function(),
     recombinator=RUniform(),
-    mutator=MUniform(0.5),
-    same_agent_breeding=False
+    mutator=MUniform(mutation_rate),
+    same_agent_breeding=False,
+    plot_metrics=True
 )
 
 mother_nature.run_evolution()
