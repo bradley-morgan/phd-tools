@@ -36,25 +36,8 @@ class KnapSack:
         self.value_spread = value_spread
         self.weight_limit = weight_limit
         self.total_items = total_items
-        self.variables = []
         self.population = []
         self.problem_space = []
-
-    def add_variable(
-            self,
-            name: str,
-            value_type: str,
-            value_strength: float,
-            weight_type: str,
-            weight_strength: float
-    ):
-        self.variables.append({
-            'name': name,
-            'value_type': value_type,
-            'value_strength': value_strength,
-            'weight_type': weight_type,
-            'weight_strength': weight_strength
-        })
 
     def generate_problem_space(self):
         index = 0
@@ -75,11 +58,13 @@ class KnapSack:
 
             fitness = 0
             total_weight = 0
+            items_selected = 0
             for i in range(0, len(genetic_material)):
                 gene = genetic_material[i]
                 if gene == 0:
                     continue
 
+                items_selected += 1
                 item = self.problem_space[i]
                 fitness += item['value']
                 total_weight += item['weight']
@@ -88,45 +73,16 @@ class KnapSack:
                     fitness = 0
                     break
 
-            return fitness
+            return fitness, total_weight, items_selected
 
         return lambda genetic_material: func(genetic_material)
 
-    def convert_types(self, associtation_type):
-        out_type = 0
-        if associtation_type is 'pos' or associtation_type is 'positive':
-            out_type = 1
-
-        if associtation_type is 'neg' or associtation_type is 'negative':
-            out_type = -1
-
-        return out_type
-
     def create_item(self, name):
 
-        item = {'name': name, 'value': 0, 'weight': 0}
-        sum_val_strengths = 0
-        sum_weight_strengths = 0
-        for var in self.variables:
-            val_type = self.convert_types(var['value_type'])
-            val_strength = var['value_strength']
-            weight_type = self.convert_types(var['weight_type'])
-            weight_strength = var['weight_strength']
-
-            value_sample = np.random.normal(self.value_average, self.value_spread)
-            weight_sample = np.random.normal(self.weight_average, self.weight_spread)
-            item[var['name']] = {
-                'value_contribution': value_sample * val_type * val_strength,
-                'weight_constribution': weight_sample * weight_type * weight_strength
-            }
-
-            item['value'] += item[var['name']]['value_contribution']
-            item['weight'] += item[var['name']]['weight_constribution']
-            sum_val_strengths += val_strength
-            sum_weight_strengths += weight_strength
-
-        item['value'] = item['value'] / sum_val_strengths
-        item['weight'] = item['weight'] / sum_weight_strengths
+        item = {
+            'name': name, 'value': np.random.normal(self.value_average, self.value_spread),
+            'weight': np.random.normal(self.weight_average, self.weight_spread)
+        }
 
         if item['value'] < 0:
             item['value'] = 0
